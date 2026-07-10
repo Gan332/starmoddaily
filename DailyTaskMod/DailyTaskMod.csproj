@@ -3,13 +3,29 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
-    <ModZipPath>$(MSBuildProjectDirectory)</ModZipPath>
     <EnableModZip>false</EnableModZip>
     <EnableModDeploy>false</EnableModDeploy>
   </PropertyGroup>
-  <ItemGroup>
+
+  <!--
+    Two build paths:
+      1) CI (GamePath set + DLLs exist) → direct <Reference> items, no ModBuildConfig.
+      2) Local dev (no GamePath / no DLLs) → Pathoschild.Stardew.ModBuildConfig auto-detects game.
+  -->
+
+  <ItemGroup Condition="'$(GamePath)' != '' And Exists('$(GamePath)/Stardew Valley.dll')">
+    <Reference Include="Stardew Valley" HintPath="$(GamePath)/Stardew Valley.dll" Private="False" />
+    <Reference Include="StardewModdingAPI" HintPath="$(GamePath)/StardewModdingAPI.dll" Private="False" />
+    <Reference Include="MonoGame.Framework" HintPath="$(GamePath)/MonoGame.Framework.dll" Private="False" />
+    <Reference Include="xTile" HintPath="$(GamePath)/xTile.dll" Private="False" />
+    <Reference Include="StardewValley.GameData" HintPath="$(GamePath)/StardewValley.GameData.dll" Private="False" />
+    <Reference Include="Newtonsoft.Json" HintPath="$(GamePath)/smapi-internal/Newtonsoft.Json.dll" Private="False" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(GamePath)' == '' Or !Exists('$(GamePath)/Stardew Valley.dll')">
     <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.4.0" />
   </ItemGroup>
+
   <ItemGroup>
     <TranslationFiles Include="i18n/**" />
   </ItemGroup>
