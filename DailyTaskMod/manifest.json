@@ -1,0 +1,10 @@
+{
+  "Name": "Daily Task Automation",
+  "Author": "Codex",
+  "Version": "1.0.0",
+  "Description": "自动完成星露谷物语日常任务：浇水、收获、动物照料、机器收集、社交等。支持按键触发和每日自动运行。",
+  "UniqueID": "codex.dailytaskautomation",
+  "EntryDll": "DailyTaskMod.dll",
+  "MinimumApiVersion": "3.15.0",
+  "UpdateKeys": []
+}

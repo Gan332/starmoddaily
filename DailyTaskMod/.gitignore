@@ -1,0 +1,15 @@
+bin/
+obj/
+*.user
+*.suo
+*.sln.docstates
+packages/
+*.nupkg
+**/.vs/
+**/[Rr]elease/
+**/[Dd]ebug/
+.store/
+/DailyTaskMod.*.nupkg
+*.ps1
+*.cmd
+*.bat

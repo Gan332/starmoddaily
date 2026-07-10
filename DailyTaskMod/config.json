@@ -1,0 +1,101 @@
+{
+  "enableAutoRun": true,
+  "autoRunDelayTicks": 120,
+  "autoRunOnNewDay": true,
+  "onlyIfPlayerIdle": true,
+  "showHudMessages": true,
+  "showTaskProgress": true,
+  "maxTasksPerRun": 30,
+
+  "taskToggleKey": "K",
+
+  "watering": {
+    "enabled": true,
+    "onlyUnwatered": true,
+    "respectSprinklers": true,
+    "useWaterFromInventory": true,
+    "maxWateringCanLevel": 4
+  },
+
+  "cropHarvest": {
+    "enabled": true,
+    "harvestFlowers": true,
+    "harvestRegrowable": true
+  },
+
+  "animalPetting": {
+    "enabled": true,
+    "petAllAnimals": true
+  },
+
+  "animalProducts": {
+    "enabled": true,
+    "collectMilk": true,
+    "collectEggs": true,
+    "collectWool": true,
+    "collectTruffles": true,
+    "collectFeathers": true
+  },
+
+  "animalFeeding": {
+    "enabled": true,
+    "placeHayInBarn": true,
+    "openGatesInGoodWeather": true,
+    "closeGatesInRain": true
+  },
+
+  "machineHarvest": {
+    "enabled": true,
+    "collectKegs": true,
+    "collectPreserveJars": true,
+    "collectCheesePresses": true,
+    "collectMayonnaiseMachines": true,
+    "collectLoom": true,
+    "collectOilMakers": true,
+    "collectFurnaces": true,
+    "collectCharcoalKilns": true,
+    "collectCrystalariums": true,
+    "collectSeedMakers": true,
+    "collectSluices": true,
+    "collectBoneMills": true,
+    "collectTappers": true,
+    "collectBeeHouses": true,
+    "collectDehydrators": true,
+    "collectFishSmokers": true
+  },
+
+  "treeTasks": {
+    "enabled": true,
+    "harvestFruitTrees": true,
+    "collectTreeTappers": true,
+    "shakeTreesForSeeds": false
+  },
+
+  "forage": {
+    "enabled": true,
+    "collectForageItems": true,
+    "clearDebris": true,
+    "clearWeeds": true,
+    "clearStones": true,
+    "onlyClearPaths": true,
+    "maxClearRadius": 50
+  },
+
+  "social": {
+    "enabled": true,
+    "giveBirthdayGifts": true,
+    "birthdayGiftQuality": "gold",
+    "talkToSpouse": true,
+    "petDogOrCat": true
+  },
+
+  "misc": {
+    "enabled": true,
+    "checkTV": true,
+    "processGeodes": false,
+    "collectCaveMushrooms": true,
+    "checkMail": true,
+    "collectFishPonds": true,
+    "collectSlimeBalls": true
+  }
+}

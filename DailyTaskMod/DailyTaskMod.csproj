@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <GamePath Condition="'$(STEAMAPPS)' != '' AND Exists('$(STEAMAPPS)/Stardew Valley')">$(STEAMAPPS)/Stardew Valley</GamePath>
+    <GamePath Condition="'$(GAMEPATH)' != ''">$(GAMEPATH)</GamePath>
+    <IgnoreModBuildConfigGamePath Condition="'$(IGNORE_MOD_BUILD_CONFIG)' == 'true'">true</IgnoreModBuildConfigGamePath>
+    <ModZipPath>$(MSBuildProjectDirectory)</ModZipPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.1.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <TranslationFiles Include="i18n/**" />
+  </ItemGroup>
+</Project>

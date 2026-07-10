@@ -1,0 +1,81 @@
+name: Build SMAPI Mod
+
+on:
+  push:
+    branches: [ main, master ]
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+  release:
+    types: [ published, created ]
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  IGNORE_MOD_BUILD_CONFIG: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: DailyTaskMod
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 6.0
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Restore NuGet packages
+        run: dotnet restore
+
+      - name: Build mod (Release)
+        run: dotnet build -c Release --no-restore
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: DailyTaskMod
+          path: DailyTaskMod/bin/Release/net6.0/
+          if-no-files-found: error
+
+  release-package:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: DailyTaskMod
+          path: mod-files
+
+      - name: Create zip package
+        shell: pwsh
+        run: |
+          $version = "${{ github.ref_name }}"
+          if ($version -eq "" -or $version -like "*/merge") { $version = "latest" }
+          Compress-Archive -Path mod-files/* -DestinationPath "DailyTaskMod-$version.zip" -Force
+          echo "version=$version" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: DailyTaskMod-Package
+          path: "*.zip"
+
+      - name: Upload Release Asset
+        if: github.event_name == 'release'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: DailyTaskMod-${{ env.version }}.zip
+          asset_name: DailyTaskMod-${{ env.version }}.zip
+          asset_content_type: application/zip
