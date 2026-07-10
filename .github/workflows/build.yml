@@ -25,7 +25,6 @@ on:
 env:
   DOTNET_NOLOGO: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true
-  IGNORE_MOD_BUILD_CONFIG: true
 
 jobs:
   build:
@@ -49,7 +48,7 @@ jobs:
       - name: Restore NuGet packages
         run: dotnet restore
 
-      - name: Build Release
+      - name: Build Release (CI mode, no Stardew Valley installed)
         run: dotnet build -c Release --no-restore -p:IgnoreModBuildConfigGamePath=true
 
       - name: Resolve version
@@ -66,11 +65,26 @@ jobs:
           echo "version=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
           echo "is_release=$isRelease" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
 
-      - name: Package mod zip
+      - name: Package mod zip (DLL + manifest + i18n)
         shell: pwsh
         run: |
+          # Staging directory for a clean mod package
+          $staging = "../staging/DailyTaskMod"
+          New-Item -ItemType Directory -Path $staging -Force | Out-Null
+
+          # Copy build output (DLL + dependencies)
+          Copy-Item -Path "bin/Release/net6.0/*" -Destination $staging -Recurse -Force
+
+          # Ensure manifest.json and i18n are included
+          if (-not (Test-Path "$staging/manifest.json")) {
+            Copy-Item -Path "manifest.json" -Destination $staging
+          }
+          if (-not (Test-Path "$staging/i18n")) {
+            Copy-Item -Path "i18n" -Destination $staging -Recurse
+          }
+
           $zipName = "DailyTaskMod-${{ steps.resolve-version.outputs.version }}.zip"
-          Compress-Archive -Path bin/Release/net6.0/* -DestinationPath "../$zipName" -Force
+          Compress-Archive -Path "$staging/*" -DestinationPath "../$zipName" -Force
           echo "PACKAGE_ZIP=$zipName" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
 
       - name: Upload raw build artifact

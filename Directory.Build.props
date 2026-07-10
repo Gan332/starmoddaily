@@ -1,0 +1,7 @@
+
+<Project>
+  <PropertyGroup>
+    <!-- CI builds don't have Stardew Valley installed, so skip the game folder check -->
+    <IgnoreModBuildConfigGamePath Condition="'$(CI)' == 'true'">true</IgnoreModBuildConfigGamePath>
+  </PropertyGroup>
+</Project>
