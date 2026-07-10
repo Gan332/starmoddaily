@@ -50,7 +50,7 @@ jobs:
         run: dotnet restore
 
       - name: Build Release
-        run: dotnet build -c Release --no-restore
+        run: dotnet build -c Release --no-restore -p:IgnoreModBuildConfigGamePath=true
 
       - name: Resolve version
         id: resolve-version
