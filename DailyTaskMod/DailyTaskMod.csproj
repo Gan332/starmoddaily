@@ -5,7 +5,7 @@
     <Nullable>disable</Nullable>
     <GamePath Condition="'$(STEAMAPPS)' != '' AND Exists('$(STEAMAPPS)/Stardew Valley')">$(STEAMAPPS)/Stardew Valley</GamePath>
     <GamePath Condition="'$(GAMEPATH)' != ''">$(GAMEPATH)</GamePath>
-    <IgnoreModBuildConfigGamePath Condition="'$(IGNORE_MOD_BUILD_CONFIG)' == 'true'">true</IgnoreModBuildConfigGamePath>
+    <IgnoreModBuildConfigGamePath>true</IgnoreModBuildConfigGamePath>
     <ModZipPath>$(MSBuildProjectDirectory)</ModZipPath>
   </PropertyGroup>
   <ItemGroup>
