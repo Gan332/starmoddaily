@@ -37,7 +37,6 @@ namespace DailyTaskMod.Tasks
                     var tv = farmHouse.furniture?.FirstOrDefault(f => f.Name.Contains("TV") || f.Name.Contains("Television"));
                     if (tv != null)
                     {
-                        // 观看电视（游戏内部逻辑会更新今日信息）
                         tv.checkForAction(player);
                         actions++;
                     }
@@ -55,7 +54,6 @@ namespace DailyTaskMod.Tasks
                         var obj = pair.Value;
                         if (obj != null && obj.bigCraftable.Value)
                         {
-                            // 蘑菇箱产出
                             if (GameHelper.MachineHasOutput(obj))
                             {
                                 obj.checkForAction(player);
@@ -66,7 +64,7 @@ namespace DailyTaskMod.Tasks
                 }
             }
 
-            // 收集鱼塘产出
+            // 收集鱼塘产出 (SDV 1.6: hasOutput → output.Value, grabFarmItem → CatchFish)
             if (config?.Misc.CollectFishPonds == true)
             {
                 var farm = Game1.getFarm();
@@ -74,9 +72,9 @@ namespace DailyTaskMod.Tasks
                 {
                     if (building is FishPond pond)
                     {
-                        if (pond.hasOutput.Value && GameHelper.HasInventorySpace(player))
+                        if (pond.output.Value != null && GameHelper.HasInventorySpace(player))
                         {
-                            pond.grabFarmItem(player);
+                            pond.CatchFish();
                             actions++;
                         }
                     }
@@ -91,7 +89,7 @@ namespace DailyTaskMod.Tasks
                     foreach (var pair in loc.objects.Pairs)
                     {
                         var obj = pair.Value;
-                        if (obj != null && obj.ParentSheetIndex == 56 && GameHelper.MachineHasOutput(obj)) // 史莱姆球 (Slime Ball)
+                        if (obj != null && obj.ParentSheetIndex == 56 && GameHelper.MachineHasOutput(obj))
                         {
                             obj.checkForAction(player);
                             actions++;
@@ -103,7 +101,7 @@ namespace DailyTaskMod.Tasks
             // 检查邮件 (由游戏自动处理，但我们可以确保今天已检查)
             if (config?.Misc.CheckMail == true)
             {
-                Game1.mailbox?.Clear(); // 清空邮件队列（标记为已读）
+                Game1.mailbox?.Clear();
                 actions++;
             }
 

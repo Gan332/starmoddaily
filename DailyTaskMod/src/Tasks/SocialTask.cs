@@ -4,6 +4,7 @@ using StardewValley;
 using StardewValley.Characters;
 using StardewValley.Locations;
 using DailyTaskMod.Helpers;
+using Object = StardewValley.Object;
 
 namespace DailyTaskMod.Tasks
 {
@@ -31,21 +32,21 @@ namespace DailyTaskMod.Tasks
             if (config?.Social.PetDogOrCat == true)
             {
                 var pet = GameHelper.GetPet();
-                if (pet != null && !pet.wasPetToday.Value)
+                if (pet != null && !pet.hasBeenKissedToday.Value)
                 {
-                    pet.pet(player);
+                    // SDV 1.6: 使用 OnPetPush 替代旧版 pet() 方法
+                    pet.OnPetPush(player.UniqueMultiplayerID);
                     actions++;
                 }
             }
 
-            // 与配偶对话
+            // 与配偶对话 (SDV 1.6: todayAtFarmHouse → hasBeenKissedToday)
             if (config?.Social.TalkToSpouse == true && player.spouse != null)
             {
                 var spouse = player.getSpouse();
-                if (spouse != null && !spouse.todayAtFarmHouse.Value)
+                if (spouse != null && !spouse.hasBeenKissedToday.Value)
                 {
-                    spouse.todayAtFarmHouse.Set(true);
-                    spouse.dialogueQuestionsAsked.Add("spouse_" + Game1.Date.TotalDays);
+                    spouse.hasBeenKissedToday.Value = true;
                     actions++;
                 }
             }
@@ -69,17 +70,16 @@ namespace DailyTaskMod.Tasks
             {
                 foreach (var npc in loc.characters.OfType<NPC>())
                 {
-                    if (npc.IsVillager && GameHelper.IsBirthday(npc) && !npc.Giftermail.Contains(player.UniqueMultiplayerID.ToString()))
+                    if (npc.IsVillager && GameHelper.IsBirthday(npc) && npc.CanReceiveGifts())
                     {
                         var gift = GameHelper.GetLovedGift(npc, player, config?.Social.BirthdayGiftQuality);
                         if (gift != null)
                         {
                             try
                             {
-                                // 模拟送礼
+                                // SDV 1.6: receiveGift 需要 Object, Farmer, bool, float, bool
                                 player.Items.Remove(gift);
-                                npc.receiveGift(gift, player, true);
-                                npc.Giftermail.Add(player.UniqueMultiplayerID.ToString());
+                                npc.receiveGift((Object)gift, player, true, 1.0f, false);
                                 given++;
                             }
                             catch { }

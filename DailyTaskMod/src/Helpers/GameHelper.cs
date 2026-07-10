@@ -104,7 +104,7 @@ namespace DailyTaskMod.Helpers
             foreach (var pair in location.terrainFeatures.Pairs)
             {
                 if (pair.Value is HoeDirt dirt && dirt.crop != null)
-                    yield return pair;
+                    yield return new KeyValuePair<Vector2, HoeDirt>(pair.Key, dirt);
             }
         }
 
@@ -128,7 +128,7 @@ namespace DailyTaskMod.Helpers
             foreach (var obj in location.objects.Pairs)
             {
                 if (obj.Value is Object o && o.IsSprinkler() &&
-                    o.IsSprinklerRange(tile))
+                    o.IsInSprinklerRangeBroadphase(tile))
                     return true;
             }
             return false;
@@ -217,30 +217,19 @@ namespace DailyTaskMod.Helpers
         public static bool IsBirthday(NPC npc)
         {
             var date = Game1.Date;
-            return npc.Birthday_Season == date.Season && npc.Birthday_Day == date.DayOfMonth;
+            return npc.Birthday_Season == date.Season.ToString() && npc.Birthday_Day == date.DayOfMonth;
         }
 
         /// <summary>获取 NPC 最爱的礼物 (有库存的情况下)</summary>
         public static Item GetLovedGift(NPC npc, Farmer player, string quality = "gold")
         {
-            // 检查赠送者是否能找到
-            var lovedItems = npc.GiftTastes?.Where(t => t switch
-            {
-                2 or 3 or 4 or 5 or 6 or 7 or 8 => true, // Loved gifts in Stardew Valley
-                _ => false
-            }).Select(t => t.Item1).ToList();
-
-            if (lovedItems == null || lovedItems.Count == 0)
-                return null;
-
-            // 在背包中找最爱的礼物
+            // SDV 1.6: 使用 getGiftTasteForThisItem 替代旧的 GiftTastes
             foreach (var item in player.Items)
             {
                 if (item == null) continue;
-                if (lovedItems.Contains(item.ParentSheetIndex))
+                if (item is Object obj && npc.getGiftTasteForThisItem(obj) == 0) // 0 = giftTaste_love
                     return item;
             }
-
             return null;
         }
 
@@ -273,13 +262,15 @@ namespace DailyTaskMod.Helpers
         /// <summary>获取干草库存 (从筒仓)</summary>
         public static int GetHayCount()
         {
-            return Game1.getFarm().piecesOfHay.Value + Utility.numSilos() * 240;
+            var farm = Game1.getFarm();
+            int siloCount = farm.buildings.Count(b => b.buildingType.Value == "Silo");
+            return farm.piecesOfHay.Value + siloCount * 240;
         }
 
         /// <summary>往喂料斗放干草</summary>
         public static bool PlaceHayInFeed(AnimalHouse house)
         {
-            if (house.numberOfObjectsWithName("Hay") >= house.animalLimit)
+            if (house.numberOfObjectsWithName("Hay") >= house.animalLimit.Value)
                 return false;
 
             // 检查是否有干草库存
@@ -288,14 +279,14 @@ namespace DailyTaskMod.Helpers
 
             // 使用游戏内置的加干草逻辑
             int placed = house.numberOfObjectsWithName("Hay");
-            int maxFeeders = house.animalLimit;
+            int maxFeeders = house.animalLimit.Value;
 
             for (int i = placed; i < maxFeeders; i++)
             {
-                if (Game1.getFarm().piecesOfHay.Value > 0)
+            if (Game1.getFarm().piecesOfHay.Value > 0)
                 {
-                    Game1.getFarm().piecesOfHay.Value--;
-                    var hay = new Object(178, 1);
+                Game1.getFarm().piecesOfHay.Value--;
+                    var hay = new Object(new Vector2(6 + i, 3), "178");
                     house.objects.Add(new Vector2(6 + i, 3), hay);
                 }
                 else break;
@@ -308,7 +299,7 @@ namespace DailyTaskMod.Helpers
         public static bool TryCollectFishPond(FishPond pond)
         {
             if (pond == null) return false;
-            return pond.needsWatering.Value || pond.hasUnlockedFinalPopulationCap.Value;
+            return pond.output.Value != null || pond.HasUnresolvedNeeds();
         }
 
         /// <summary>尝试安全地执行动作并捕获异常</summary>

@@ -34,9 +34,9 @@ namespace DailyTaskMod.Tasks
             // 抚摸室外动物
             foreach (var animal in farm.Animals.Values)
             {
-                if (!GameHelper.WasPetToday(animal) && animal.CanBePet())
+                if (!GameHelper.WasPetToday(animal))
                 {
-                    animal.pet(player);
+                    animal.pet(player, false);
                     petted++;
                 }
             }
@@ -49,9 +49,9 @@ namespace DailyTaskMod.Tasks
                     buildingCount++;
                     foreach (var animal in house.Animals.Values)
                     {
-                        if (!GameHelper.WasPetToday(animal) && animal.CanBePet())
+                        if (!GameHelper.WasPetToday(animal))
                         {
-                            animal.pet(player);
+                            animal.pet(player, false);
                             petted++;
                         }
                     }
@@ -96,9 +96,12 @@ namespace DailyTaskMod.Tasks
                     break;
                 if (ShouldCollect(obj.ParentSheetIndex, config))
                 {
-                    obj.performToolAction(null, player); // 拾取
-                    Game1.currentLocation.removeObject(obj.TileLocation, false);
-                    collected++;
+                    // 直接添加到背包并移除地面物品 (替代旧版 performToolAction)
+                    if (player.addItemToInventoryBool(obj, true))
+                    {
+                        farm.removeObject(obj.TileLocation, false);
+                        collected++;
+                    }
                 }
             }
 
@@ -117,8 +120,11 @@ namespace DailyTaskMod.Tasks
                             break;
                         if (ShouldCollect(obj.ParentSheetIndex, config))
                         {
-                            house.removeObject(obj.TileLocation, false);
-                            collected++;
+                            if (player.addItemToInventoryBool(obj, true))
+                            {
+                                house.removeObject(obj.TileLocation, false);
+                                collected++;
+                            }
                         }
                     }
                 }

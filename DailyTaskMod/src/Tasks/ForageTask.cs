@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using StardewValley;
-using StardewValley.TerrainFeatures;
 using StardewValley.Locations;
 using DailyTaskMod.Helpers;
+using StardewValley.TerrainFeatures;
 using Object = StardewValley.Object;
 
 namespace DailyTaskMod.Tasks
@@ -41,18 +41,20 @@ namespace DailyTaskMod.Tasks
                     var obj = pair.Value;
                     if (obj != null && obj.IsSpawnedObject && !IsAnimalProduce(obj.ParentSheetIndex))
                     {
-                        obj.performToolAction(null, player);
-                        farm.removeObject(pair.Key, false);
-                        collected++;
+                        if (player.addItemToInventoryBool(obj, true))
+                        {
+                            farm.removeObject(pair.Key, false);
+                            collected++;
+                        }
                     }
                 }
             }
 
-            // 清理杂草
+            // 清理杂草 (SDV 1.6: Weed 类型已移除，只保留 Grass)
             if (config?.Forage.ClearWeeds == true)
             {
                 var weeds = farm.terrainFeatures.Pairs
-                    .Where(p => p.Value is Grass || p.Value is Weed)
+                    .Where(p => p.Value is Grass)
                     .ToList();
 
                 foreach (var pair in weeds)
@@ -62,7 +64,6 @@ namespace DailyTaskMod.Tasks
 
                     if (config?.Forage.OnlyClearPaths == true)
                     {
-                        // 只清理路径附近的 (靠近建筑/围栏)
                         if (!IsNearBuilding(farm, pair.Key))
                             continue;
                     }
@@ -102,7 +103,6 @@ namespace DailyTaskMod.Tasks
         private bool IsDebris(Object obj)
         {
             int id = obj.ParentSheetIndex;
-            // 碎石, 树枝, 树桩, 杂草
             return id == 0 || id == 1 || id == 2 || id == 3 || id == 4 || id == 5
                 || id == 6 || id == 7 || id == 8 || id == 9 || id == 10
                 || id == 11 || id == 12 || id == 13 || id == 14 || id == 15

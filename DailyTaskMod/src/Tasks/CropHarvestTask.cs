@@ -45,23 +45,25 @@ namespace DailyTaskMod.Tasks
                     continue;
 
                 // 是否是再生作物 (蓝莓/蔓越莓等)
-                bool isRegrowable = dirt.crop.regrowAfterHarvest.Value >= 0;
+                bool isRegrowable = dirt.crop.RegrowsAfterHarvest();
                 if (isRegrowable && config?.CropHarvest.HarvestRegrowable == false)
                     continue;
 
                 if (!GameHelper.HasInventorySpace(player))
                     break;
 
-                // 收获作物 - 模拟右键点击
+                // 收获作物
                 try
                 {
-                    bool autoHarvest = dirt.crop.harvestMethod.Value == Crop.sickleHarvest;
-                    if (dirt.crop.harvest())
+                    // SDV 1.6: harvest 需要完整参数
+                    // 对于自动收获，使用 isForcedScytheHarvest=false，junimoHarvester=null
+                    bool autoHarvest = dirt.crop.GetHarvestMethod() == 0; // 0 = harvest method (not scythe)
+                    if (dirt.crop.harvest((int)tile.X, (int)tile.Y, dirt, null, false))
                     {
                         harvested++;
 
                         // 再生作物不摧毁植株
-                        if (dirt.crop.regrowAfterHarvest.Value <= 0)
+                        if (!dirt.crop.RegrowsAfterHarvest())
                         {
                             dirt.crop = null;
                         }
@@ -80,11 +82,11 @@ namespace DailyTaskMod.Tasks
 
         private bool IsFlowerCrop(Crop crop)
         {
-            int id = crop.indexOfHarvest.Value;
-            // 常见花朵：288 (郁金香), 424 (虞美人), 521 (蓝爵), 595 (玫瑰仙子)
-            // 597 (向日葵), 591 (蜜汁山茶花)
-            return id == 288 || id == 424 || id == 521 || id == 595
-                || id == 597 || id == 591 || id == 376; // 番红花
+            // SDV 1.6: indexOfHarvest 是 NetString (string)
+            string id = crop.indexOfHarvest.Value;
+            // 常见花朵 id 转 string
+            return id == "288" || id == "424" || id == "521" || id == "595"
+                || id == "597" || id == "591" || id == "376"; // 番红花
         }
     }
 }

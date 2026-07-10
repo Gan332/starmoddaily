@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using StardewValley;
-using StardewValley.Objects;
+using StardewValley.TerrainFeatures;
 using StardewValley.Locations;
 using DailyTaskMod.Helpers;
 using Object = StardewValley.Object;
@@ -44,24 +44,31 @@ namespace DailyTaskMod.Tasks
 
                     if (ShouldCollectMachine(obj, config))
                     {
-                        // 收集产出 - 触发机器的产出收集逻辑
                         obj.checkForAction(player);
                         collected++;
                     }
                 }
 
-                // 收集 tappers (它们也在 maps 中，但可能在某些特殊地点)
+                // 收集 tappers (SDV 1.6: tree.heldObject 已移除，改为直接查找 tapper Object)
                 if (config?.TreeTasks.CollectTreeTappers == true)
                 {
                     foreach (var feature in loc.terrainFeatures.Pairs)
                     {
-                        if (feature.Value is Tree tree && tree.tapped.Value && tree.heldObject.Value != null)
+                        if (feature.Value is Tree tree && tree.tapped.Value)
                         {
                             if (!GameHelper.HasInventorySpace(player))
                                 break;
 
-                            tree.performUseAction(feature.Key);
-                            collected++;
+                            // 查找该位置的 tapper Object
+                            if (loc.objects.TryGetValue(feature.Key, out Object tapperObj)
+                                && tapperObj != null && tapperObj.ParentSheetIndex == 254)
+                            {
+                                if (tapperObj.heldObject.Value != null && tapperObj.readyForHarvest.Value)
+                                {
+                                    tapperObj.checkForAction(player);
+                                    collected++;
+                                }
+                            }
                         }
                     }
                 }

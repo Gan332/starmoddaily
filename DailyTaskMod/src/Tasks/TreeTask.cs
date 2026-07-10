@@ -5,6 +5,7 @@ using StardewValley.TerrainFeatures;
 using StardewValley.Objects;
 using Microsoft.Xna.Framework;
 using DailyTaskMod.Helpers;
+using Object = StardewValley.Object;
 
 namespace DailyTaskMod.Tasks
 {
@@ -57,11 +58,15 @@ namespace DailyTaskMod.Tasks
 
                         if (pair.Value is Tree tree && tree.tapped.Value)
                         {
-                            if (tree.heldObject.Value != null)
+                            // SDV 1.6: tree.heldObject 已移除，改为检查该位置的 Object (tapper)
+                            if (loc.objects.TryGetValue(pair.Key, out Object obj) && obj != null
+                                && obj.ParentSheetIndex == 254) // Tapper
                             {
-                                // 尝试使用 tapper 产出收集
-                                tree.performUseAction(pair.Key);
-                                collected++;
+                                if (obj.heldObject.Value != null && obj.readyForHarvest.Value)
+                                {
+                                    obj.checkForAction(player);
+                                    collected++;
+                                }
                             }
                         }
                     }
@@ -80,7 +85,6 @@ namespace DailyTaskMod.Tasks
                         {
                             // 摇动树让种子掉落 (模拟摇树逻辑)
                             tree.shake(pair.Key, false);
-                            // 种子掉落由游戏内部逻辑处理
                         }
                     }
                 }
