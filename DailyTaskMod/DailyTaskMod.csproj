@@ -8,7 +8,7 @@
     <EnableModDeploy Condition="'$(GamePath)' != ''">false</EnableModDeploy>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.4.0" />
+    <PackageReference Include="StardewModdingAPI.ModBuildConfig" Version="4.1.1" />
   </ItemGroup>
   <ItemGroup>
     <TranslationFiles Include="i18n/**" />

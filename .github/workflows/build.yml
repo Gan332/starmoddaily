@@ -1,8 +1,5 @@
 # ============================================================
-# DailyTaskMod — Build & Release 工作流
-# 触发方式:
-#   push / PR → 仅编译验证 + 上传构件
-#   workflow_dispatch (手动输入版本号) → 编译 + 创建 Release
+# DailyTaskMod — Build & Release workflow
 # ============================================================
 
 name: Build & Release
@@ -18,13 +15,14 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Release 版本号 (例如 1.0.0)"
+        description: "Release version (e.g. 1.0.0)"
         required: true
         type: string
 
 env:
   DOTNET_NOLOGO: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true
+  IGNORE_MOD_BUILD_CONFIG: true
 
 jobs:
   build:
@@ -45,8 +43,11 @@ jobs:
         with:
           dotnet-version: 6.0.x
 
-      - name: Build Release (CI mode, no Stardew Valley installed)
-        run: dotnet build -c Release -p:IgnoreModBuildConfigGamePath=true -v n
+      - name: Restore NuGet packages (including SMAPI feed)
+        run: dotnet restore
+
+      - name: Build Release
+        run: dotnet build -c Release --no-restore
 
       - name: Resolve version
         id: resolve-version
@@ -120,23 +121,23 @@ jobs:
           tag_name: v${{ needs.build.outputs.version }}
           name: DailyTaskMod v${{ needs.build.outputs.version }}
           body: |
-            Daily Task Automation 模组 v${{ needs.build.outputs.version }}
+            Daily Task Automation mod v${{ needs.build.outputs.version }}
 
-            ## 安装方法
-            1. 安装 SMAPI 3.15+
-            2. 下载本 Release 的 zip 附件
-            3. 解压到 Stardew Valley/Mods/ 目录
-            4. 启动游戏，按 K 键执行日常任务
+            ## How to install
+            1. Install SMAPI 3.15+
+            2. Download the zip from this Release
+            3. Extract to Stardew Valley/Mods/
+            4. Launch game, press K to run daily tasks
 
-            ## 功能
-            - 💧 自动浇灌（跳过洒水器）
-            - 🌾 自动收获（含花卉/再生作物）
-            - 🐄 自动抚摸 + 收集动物产品 + 喂养
-            - ⚙️ 自动收集所有机器产出（16种）
-            - 🌳 果树 + 树液采集器
-            - 🌿 采集品拾取 + 清理
-            - 💝 社交（生日送礼/摸宠物/配偶）
-            - 📺 杂项（电视/鱼塘/山洞/史莱姆球）
+            ## Features
+            - Watering (skip sprinklers)
+            - Harvesting (including flowers/re-growing crops)
+            - Pet & collect animal products & feed
+            - Collect from all machines (16 types)
+            - Fruit trees & tappers
+            - Forage pickup & cleanup
+            - Social (birthday gifts/pet/roommate)
+            - Misc (TV/pond/cave/slime ball)
           files: DailyTaskMod-*.zip
           draft: false
           prerelease: false
