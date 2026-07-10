@@ -30,12 +30,12 @@ namespace DailyTaskMod.Tasks
         public TaskResult Execute(Farmer player, GameLocation location)
         {
             if (!CanExecute(player, location))
-                return TaskResult.Skipped("没有水壶或水量不足");
+                return TaskResult.SkippedResult("没有水壶或水量不足");
 
             int watered = 0;
             var config = ModEntry.Instance?.Config;
             var wateringCan = GameHelper.FindTool<WateringCan>(player);
-            if (wateringCan == null) return TaskResult.Skipped();
+            if (wateringCan == null) return TaskResult.SkippedResult();
 
             int powerLevel = wateringCan.UpgradeLevel;
             int maxPower = config?.Watering.MaxWateringCanLevel ?? 4;
@@ -58,7 +58,7 @@ namespace DailyTaskMod.Tasks
                 if (wateringCan.WaterLeft > 0)
                 {
                     dirt.state.Value = HoeDirt.watered;
-                    wateringCan.WaterLeft.Value--;
+                    wateringCan.WaterLeft--;
                     watered++;
                 }
                 else

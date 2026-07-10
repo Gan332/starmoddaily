@@ -31,8 +31,8 @@ namespace DailyTaskMod.Helpers
         public static IEnumerable<GameLocation> GetAllLocations()
         {
             return Game1.locations
-                .Concat(Game1.locations.OfType<BuildableGameLocation>()
-                    .SelectMany(bgl => bgl.buildings
+                .Concat(Game1.locations.OfType<Farm>()
+                    .SelectMany(farm => farm.buildings
                         .Where(b => b.indoors.Value != null)
                         .Select(b => b.indoors.Value)));
         }

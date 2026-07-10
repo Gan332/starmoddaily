@@ -5,28 +5,15 @@
     <Nullable>disable</Nullable>
     <EnableModZip>false</EnableModZip>
     <EnableModDeploy>false</EnableModDeploy>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
   <!--
-    Two build paths:
-      1) CI (GamePath set + DLLs exist) → direct <Reference> items, no ModBuildConfig.
-      2) Local dev (no GamePath / no DLLs) → Pathoschild.Stardew.ModBuildConfig auto-detects game.
+    ModBuildConfig handles everything:
+      - Local dev: auto-detects game folder
+      - CI: use GamePath property pointing to reference assemblies
   -->
-
-  <ItemGroup Condition="'$(GamePath)' != '' And Exists('$(GamePath)/Stardew Valley.dll')">
-    <Reference Include="Stardew Valley" HintPath="$(GamePath)/Stardew Valley.dll" Private="False" />
-    <Reference Include="StardewModdingAPI" HintPath="$(GamePath)/StardewModdingAPI.dll" Private="False" />
-    <Reference Include="MonoGame.Framework" HintPath="$(GamePath)/MonoGame.Framework.dll" Private="False" />
-    <Reference Include="xTile" HintPath="$(GamePath)/xTile.dll" Private="False" />
-    <Reference Include="StardewValley.GameData" HintPath="$(GamePath)/StardewValley.GameData.dll" Private="False" />
-    <Reference Include="Newtonsoft.Json" HintPath="$(GamePath)/smapi-internal/Newtonsoft.Json.dll" Private="False" />
-    <Reference Include="SMAPI.Toolkit.CoreInterfaces" HintPath="$(GamePath)/smapi-internal/SMAPI.Toolkit.CoreInterfaces.dll" Private="False" />
-    <Reference Include="SMAPI.Toolkit" HintPath="$(GamePath)/smapi-internal/SMAPI.Toolkit.dll" Private="False" />
-    <Reference Include="0Harmony" HintPath="$(GamePath)/smapi-internal/0Harmony.dll" Private="False" />
-    <Reference Include="TMXTile" HintPath="$(GamePath)/smapi-internal/TMXTile.dll" Private="False" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(GamePath)' == '' Or !Exists('$(GamePath)/Stardew Valley.dll')">
+  <ItemGroup>
     <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.4.0" />
   </ItemGroup>
 

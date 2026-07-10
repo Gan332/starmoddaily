@@ -106,7 +106,7 @@ namespace DailyTaskMod
             return Game1.activeClickableMenu == null &&
                    !Game1.player.UsingTool &&
                    !Game1.player.isEating &&
-                   !Game1.player.FarmerSprite.isAnimating;
+                   Game1.player.FarmerSprite.CurrentAnimation == null;
         }
 
         /// <summary>执行所有已启用的任务</summary>
