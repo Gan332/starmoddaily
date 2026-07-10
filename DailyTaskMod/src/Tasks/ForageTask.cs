@@ -28,7 +28,7 @@ namespace DailyTaskMod.Tasks
             int collected = 0;
             var config = ModEntry.Instance?.Config;
             var farm = Game1.getFarm();
-            if (farm == null) return TaskResult.Skipped();
+            if (farm == null) return TaskResult.SkippedResult();
 
             // 收集地上的采集物品 (非动物产品)
             if (config?.Forage.CollectForageItems == true)

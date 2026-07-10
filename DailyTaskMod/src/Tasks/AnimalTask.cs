@@ -29,7 +29,7 @@ namespace DailyTaskMod.Tasks
             int buildingCount = 0;
 
             var farm = Game1.getFarm();
-            if (farm == null) return TaskResult.Skipped();
+            if (farm == null) return TaskResult.SkippedResult();
 
             // 抚摸室外动物
             foreach (var animal in farm.Animals.Values)
@@ -63,7 +63,7 @@ namespace DailyTaskMod.Tasks
 
             return petted > 0
                 ? TaskResult.Done(petted, $"抚摸 {petted} 只动物")
-                : TaskResult.Skipped("所有动物今天已抚摸了");
+                : TaskResult.SkippedResult("所有动物今天已抚摸了");
         }
     }
 
@@ -87,7 +87,7 @@ namespace DailyTaskMod.Tasks
             var config = ModEntry.Instance?.Config;
 
             var farm = Game1.getFarm();
-            if (farm == null) return TaskResult.Skipped();
+            if (farm == null) return TaskResult.SkippedResult();
 
             // 收集地上的动物产品 (松露等)
             foreach (var obj in GameHelper.GetAnimalProduceOnGround(farm))
