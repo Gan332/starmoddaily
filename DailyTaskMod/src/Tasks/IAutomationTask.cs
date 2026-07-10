@@ -31,16 +31,16 @@ namespace DailyTaskMod.Tasks
         public bool Success { get; set; }
         public string Message { get; set; }
         public int ItemsProcessed { get; set; }
-        public bool Skipped { get; set; }
+    public bool Skipped { get; set; }
 
-        public static TaskResult Done(int count, string message = null)
-            => new() { Success = true, ItemsProcessed = count, Message = message };
+    public static TaskResult Done(int count, string message = null)
+        => new() { Success = true, ItemsProcessed = count, Message = message };
 
-        public static TaskResult Skipped(string reason = null)
-            => new() { Skipped = true, Message = reason, Success = true };
+    public static TaskResult SkippedResult(string reason = null)
+        => new() { Skipped = true, Message = reason, Success = false };
 
-        public static TaskResult Fail(string message)
-            => new() { Success = false, Message = message };
+    public static TaskResult Fail(string message)
+        => new() { Success = false, Message = message };
 
         public static TaskResult Empty()
             => new() { Success = true, ItemsProcessed = 0, Message = null };

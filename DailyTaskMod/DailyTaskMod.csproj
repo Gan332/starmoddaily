@@ -20,6 +20,10 @@
     <Reference Include="xTile" HintPath="$(GamePath)/xTile.dll" Private="False" />
     <Reference Include="StardewValley.GameData" HintPath="$(GamePath)/StardewValley.GameData.dll" Private="False" />
     <Reference Include="Newtonsoft.Json" HintPath="$(GamePath)/smapi-internal/Newtonsoft.Json.dll" Private="False" />
+    <Reference Include="SMAPI.Toolkit.CoreInterfaces" HintPath="$(GamePath)/smapi-internal/SMAPI.Toolkit.CoreInterfaces.dll" Private="False" />
+    <Reference Include="SMAPI.Toolkit" HintPath="$(GamePath)/smapi-internal/SMAPI.Toolkit.dll" Private="False" />
+    <Reference Include="0Harmony" HintPath="$(GamePath)/smapi-internal/0Harmony.dll" Private="False" />
+    <Reference Include="TMXTile" HintPath="$(GamePath)/smapi-internal/TMXTile.dll" Private="False" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(GamePath)' == '' Or !Exists('$(GamePath)/Stardew Valley.dll')">
