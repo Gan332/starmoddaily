@@ -45,11 +45,8 @@ jobs:
         with:
           dotnet-version: 6.0.x
 
-      - name: Restore NuGet packages
-        run: dotnet restore
-
       - name: Build Release (CI mode, no Stardew Valley installed)
-        run: dotnet build -c Release --no-restore -p:IgnoreModBuildConfigGamePath=true
+        run: dotnet build -c Release -p:IgnoreModBuildConfigGamePath=true -v n
 
       - name: Resolve version
         id: resolve-version
