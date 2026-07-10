@@ -4,11 +4,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
     <ModZipPath>$(MSBuildProjectDirectory)</ModZipPath>
-    <EnableModZip Condition="'$(GamePath)' != ''">true</EnableModZip>
-    <EnableModDeploy Condition="'$(GamePath)' != ''">false</EnableModDeploy>
+    <EnableModZip>false</EnableModZip>
+    <EnableModDeploy>false</EnableModDeploy>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="StardewModdingAPI.ModBuildConfig" Version="4.1.1" />
+    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.4.0" />
   </ItemGroup>
   <ItemGroup>
     <TranslationFiles Include="i18n/**" />
